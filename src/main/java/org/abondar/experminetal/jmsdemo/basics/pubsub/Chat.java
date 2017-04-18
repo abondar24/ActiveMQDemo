@@ -1,4 +1,4 @@
-package org.abondar.experminetal.jmsdemo;
+package org.abondar.experminetal.jmsdemo.basics.pubsub;
 
 
 import javax.jms.*;
@@ -19,7 +19,7 @@ public class Chat implements MessageListener {
     public Chat(String topicFactory, String topicName, String username) throws Exception {
 
         Properties env = new Properties();
-        InputStream is = getClass().getClassLoader().getResourceAsStream("jndi.properties");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("chat.properties");
         env.load(is);
 
         InitialContext context = new InitialContext(env);
@@ -52,7 +52,7 @@ public class Chat implements MessageListener {
             TextMessage msg = (TextMessage) message;
             System.out.println(msg.getText());
         } catch (JMSException ex) {
-            System.out.println(ex.getMessage());
+            System.err.println(ex.getMessage());
         }
     }
 
