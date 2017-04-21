@@ -1,4 +1,4 @@
-package org.abondar.experminetal.jmsdemo.basics.pubsub;
+package org.abondar.experminetal.jmsdemo.pubsub;
 
 
 import javax.jms.*;
@@ -11,17 +11,20 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
+public class TBorrower implements MessageListener {
 
-public class TLender {
     private TopicConnection connection = null;
     private TopicSession session = null;
     private Topic topic = null;
+    private double currentRate;
 
-    public TLender(String connFactory, String topicName) {
+    public TBorrower(String connFactory, String topicName, String rate) {
         try {
             Properties env = new Properties();
             InputStream is = getClass().getClassLoader().getResourceAsStream("tbl.properties");
             env.load(is);
+
+            currentRate = Double.valueOf(rate);
 
             Context context = new InitialContext(env);
             TopicConnectionFactory factory = (TopicConnectionFactory) context.lookup(connFactory);
@@ -29,60 +32,62 @@ public class TLender {
             connection = factory.createTopicConnection();
             session = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
             topic = (Topic) context.lookup(topicName);
+
+            TopicSubscriber subscriber = session.createSubscriber(topic);
+            subscriber.setMessageListener(this);
             connection.start();
 
+            System.out.println("Waiting for loan requests");
         } catch (JMSException | NamingException | IOException ex) {
             System.err.println(ex.getMessage());
             System.exit(1);
         }
     }
 
-    private void publishRate(double newRate) throws JMSException {
-        BytesMessage msg = session.createBytesMessage();
-        msg.writeDouble(newRate);
+    @Override
+    public void onMessage(Message message) {
+        try {
+            BytesMessage msg = (BytesMessage) message;
+            double newRate = msg.readDouble();
 
-        TopicPublisher publisher = session.createPublisher(topic);
-        publisher.publish(msg);
+            if ((currentRate - newRate) >= 1.0) {
+                System.out.println("New rate = " + newRate + " - Consider refinancing loan");
+            } else {
+                System.out.println("New rate = " + newRate + " - Keep existing loan");
+            }
+
+            System.out.println("\nWaiting for rate updates...");
+
+        } catch (JMSException jmse) {
+            System.err.println(jmse.getMessage());
+            System.exit(1);
+        }
     }
 
     private void exit() throws JMSException {
         connection.close();
         System.exit(0);
     }
-
-
     public static void main(String[] args) throws Exception {
         String connFactory = null;
         String topicName = null;
-        if (args.length == 2) {
+        String rate = null;
+        if (args.length == 3) {
             connFactory = args[0];
             topicName = args[1];
+            rate = args[2];
         } else {
             System.out.println("Invalid argument. Usage: ");
             System.out.println("java TLender factory topic");
             System.exit(0);
         }
 
-        TLender lender = new TLender(connFactory, topicName);
+        TBorrower borrower = new TBorrower(connFactory,topicName,rate);
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-        System.out.println("TLender Application Started");
+        System.out.println("TBorrower application started");
         System.out.println("Press enter to quit");
-        System.out.println("Enter: Rate");
-        System.out.println("\ne.g 6.8");
-
-        while (true) {
-            System.out.print("> ");
-            String rate = reader.readLine();
-            if (rate == null || rate.trim().length() <= 0) {
-                lender.exit();
-            }
-
-            double newRate = Double.valueOf(rate);
-
-            lender.publishRate(newRate);
-        }
+        reader.readLine();
+        borrower.exit();
     }
 }
-
-

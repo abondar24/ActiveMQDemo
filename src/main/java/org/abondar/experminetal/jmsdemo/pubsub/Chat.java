@@ -1,4 +1,4 @@
-package org.abondar.experminetal.jmsdemo.basics.pubsub;
+package org.abondar.experminetal.jmsdemo.pubsub;
 
 
 import javax.jms.*;

@@ -1,4 +1,4 @@
-package org.abondar.experminetal.jmsdemo.basics.p2p;
+package org.abondar.experminetal.jmsdemo.p2p;
 
 
 import javax.jms.*;
