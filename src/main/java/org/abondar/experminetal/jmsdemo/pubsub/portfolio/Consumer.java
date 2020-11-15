@@ -8,7 +8,7 @@ import javax.jms.*;
 
 public class Consumer {
 
-    private static String brokerURL = "tcp://172.17.0.3:61616";
+    private static String brokerURL = "tcp://0.0.0.0:61616";
     private static transient ConnectionFactory factory;
     private transient Connection connection;
     private transient Session session;
