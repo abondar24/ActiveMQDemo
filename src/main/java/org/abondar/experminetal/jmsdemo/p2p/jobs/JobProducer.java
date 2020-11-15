@@ -15,8 +15,6 @@ import javax.jms.Session;
 
 public class JobProducer implements Command {
 
-    private static String brokerURL = "tcp://0.0.0.0:61616";
-    private static transient ConnectionFactory factory;
     private static final int count = 10;
     private static int total;
     private static int id = 10000000;
@@ -52,7 +50,8 @@ public class JobProducer implements Command {
 
     @Override
     public void initConnection() throws JMSException {
-        factory = new ActiveMQConnectionFactory(brokerURL);
+        String brokerURL = "tcp://0.0.0.0:61616";
+        ConnectionFactory factory = new ActiveMQConnectionFactory(brokerURL);
         connection = factory.createConnection();
         connection.start();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);

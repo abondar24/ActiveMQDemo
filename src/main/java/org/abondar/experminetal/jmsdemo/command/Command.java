@@ -6,5 +6,5 @@ public interface Command {
 
     void execute();
 
-     void initConnection() throws JMSException;
+     void initConnection() throws Exception;
 }

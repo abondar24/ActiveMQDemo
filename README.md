@@ -9,6 +9,10 @@ Point to Point Demos using message queue.
 
 - Jobs - sent job names with ids to corresponding queues and consume them. (job)
 
+#### Brokers
+
+- Security - small broker with authentication(disable running broker ). (sec)
+
 ## Build and run
 
 ```yaml

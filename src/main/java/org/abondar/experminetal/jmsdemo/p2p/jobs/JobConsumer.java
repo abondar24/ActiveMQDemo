@@ -10,11 +10,9 @@ import javax.jms.*;
 
 public class JobConsumer implements Command {
 
-    private static String brokerURL = "tcp://0.0.0.0:61616";
-    private static transient ConnectionFactory factory;
     private transient Connection connection;
     private transient Session session;
-    private String jobs[] = new String[]{"suspend","delete"};
+    private final String[] jobs = new String[]{"suspend","delete"};
 
 
     public void close() throws JMSException{
@@ -47,7 +45,8 @@ public class JobConsumer implements Command {
 
     @Override
     public void initConnection() throws JMSException {
-        factory = new ActiveMQConnectionFactory(brokerURL);
+        String brokerURL = "tcp://0.0.0.0:61616";
+        ConnectionFactory factory = new ActiveMQConnectionFactory(brokerURL);
         connection = factory.createConnection();
         connection.start();
         session = connection.createSession(false,Session.AUTO_ACKNOWLEDGE);
