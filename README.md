@@ -11,7 +11,8 @@ Point to Point Demos using message queue.
 
 #### Brokers
 
-- Security - small broker with authentication(disable running broker ). (sec)
+- Security - small broker with authentication(disable running broker). (sec)
+- Kaha - broker with KahaDB(disable running broker). (kaha)
 
 ## Build and run
 
