@@ -3,6 +3,7 @@ package org.abondar.experminetal.jmsdemo.command;
 import org.abondar.experminetal.jmsdemo.brokers.BrokerWithSecurity;
 import org.abondar.experminetal.jmsdemo.brokers.KahaDBBroker;
 import org.abondar.experminetal.jmsdemo.p2p.LoanQueueBrowser;
+import org.abondar.experminetal.jmsdemo.p2p.Metadata;
 import org.abondar.experminetal.jmsdemo.p2p.QBorrower;
 import org.abondar.experminetal.jmsdemo.p2p.QLender;
 import org.abondar.experminetal.jmsdemo.p2p.jobs.JobConsumer;
@@ -37,6 +38,11 @@ public class CommandSwitcher {
                 case KAHA:
                     KahaDBBroker kaha = new KahaDBBroker();
                     executor.executeCommand(kaha);
+                    break;
+
+                case MD:
+                    Metadata metadata = new Metadata();
+                    executor.executeCommand(metadata);
                     break;
 
                 case QB:

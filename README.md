@@ -11,7 +11,7 @@ Point to Point Demos using message queue.
 - Queue borrower - loan request using  queue(qbr)
 - Queue lender - accept or decline loan request using  queue(ql)
 - Loand Queue Browser - another consumer for loan request queue which reads loan statuses (qb)
-
+- Metadata - read broker metadata (md)
 #### PubSub
 Publisher Subscribe Demos using message topics
 

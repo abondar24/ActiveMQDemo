@@ -13,15 +13,26 @@ import java.util.Properties;
 
 public class LoanQueueBrowser implements Command {
 
-    private QueueConnection connection = null;
-    private QueueBrowser browser;
-
 
     @Override
     public void execute() {
 
         try {
-            initConnection();
+            Properties env = new Properties();
+            InputStream is = LoanQueueBrowser.class.getClassLoader().getResourceAsStream("qbl.properties");
+            env.load(is);
+
+            Context context = new InitialContext(env);
+            String queueFactory = env.getProperty("connectionFactoryNames");
+            QueueConnectionFactory factory = (QueueConnectionFactory) context.lookup(queueFactory);
+            QueueConnection connection = factory.createQueueConnection();
+            connection.start();
+
+            String qr = env.getProperty("queue.queueResp");
+            Queue queue = (Queue) context.lookup(qr);
+            QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+            QueueBrowser browser = session.createBrowser(queue);
+
             Enumeration e = browser.getEnumeration();
             while (e.hasMoreElements()) {
                 TextMessage msg = (TextMessage) e.nextElement();
@@ -41,19 +52,6 @@ public class LoanQueueBrowser implements Command {
 
     @Override
     public void initConnection() throws Exception {
-        Properties env = new Properties();
-        InputStream is = LoanQueueBrowser.class.getClassLoader().getResourceAsStream("qbl.properties");
-        env.load(is);
 
-        Context context = new InitialContext(env);
-        String queueFactory = env.getProperty("connectionFactoryNames");
-        QueueConnectionFactory factory = (QueueConnectionFactory) context.lookup(queueFactory);
-        connection = factory.createQueueConnection();
-        connection.start();
-
-        String qr = env.getProperty("queue.queueResp");
-        Queue queue = (Queue) context.lookup(qr);
-        QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-        browser = session.createBrowser(queue);
     }
 }

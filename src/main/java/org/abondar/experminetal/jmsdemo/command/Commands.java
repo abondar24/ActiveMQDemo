@@ -5,6 +5,7 @@ public enum  Commands {
     CHAT,
     JOB,
     KAHA,
+    MD,
     QB,
     QBR,
     QL,
