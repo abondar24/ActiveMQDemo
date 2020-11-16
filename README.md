@@ -10,14 +10,18 @@ Point to Point Demos using message queue.
 - Jobs - sent job names with ids to corresponding queues and consume them. (job)
 - Queue borrower - loan request using  queue(qbr)
 - Queue lender - accept or decline loan request using  queue(ql)
-- Loand Queue Browser - another consumer for loan request queue which reads loan statuses (qb)
+- Loan Queue Browser - another consumer for loan request queue which reads loan statuses (qb)
 - Metadata - read broker metadata (md)
+
+Note: Queue borrower, Queue Lender and Loan Queue Browser work together
 #### PubSub
 Publisher Subscribe Demos using message topics
 
 - Chat - topic based chat. Better to run multiple instances (chat)
+- Portfolio Consumer - read stock data from topic (pfc)
+- Portfolio Publisher - publish stock data to topic (pfp)
 
-Note: Qborrower and Qlender work together
+Note: Portfolio Consumer and Portfolio Publisher work together
 
 #### Brokers
 

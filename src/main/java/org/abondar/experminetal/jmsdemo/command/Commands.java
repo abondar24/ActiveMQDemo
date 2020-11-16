@@ -9,6 +9,8 @@ public enum  Commands {
     QB,
     QBR,
     QL,
+    PFC,
+    PFP,
     SEC,
 
 

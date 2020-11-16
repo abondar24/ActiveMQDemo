@@ -9,6 +9,8 @@ import org.abondar.experminetal.jmsdemo.p2p.QLender;
 import org.abondar.experminetal.jmsdemo.p2p.jobs.JobConsumer;
 import org.abondar.experminetal.jmsdemo.p2p.jobs.JobProducer;
 import org.abondar.experminetal.jmsdemo.pubsub.Chat;
+import org.abondar.experminetal.jmsdemo.pubsub.portfolio.PortfolioConsumer;
+import org.abondar.experminetal.jmsdemo.pubsub.portfolio.PortfolioPublisher;
 
 public class CommandSwitcher {
 
@@ -60,7 +62,15 @@ public class CommandSwitcher {
                     executor.executeCommand(lender);
                     break;
 
+                case PFC:
+                    PortfolioConsumer consumer = new PortfolioConsumer();
+                    executor.executeCommand(consumer);
+                    break;
 
+                case PFP:
+                    PortfolioPublisher publisher = new PortfolioPublisher();
+                    executor.executeCommand(publisher);
+                    break;
 
                 case SEC:
                     BrokerWithSecurity bSec = new BrokerWithSecurity();

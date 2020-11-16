@@ -6,7 +6,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import java.text.DecimalFormat;
 
-public class Listener implements MessageListener {
+public class PortfolioListener implements MessageListener {
     @Override
     public void onMessage(Message message) {
         try {
