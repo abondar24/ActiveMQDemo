@@ -1,6 +1,8 @@
 package org.abondar.experminetal.jmsdemo.p2p;
 
 
+import org.abondar.experminetal.jmsdemo.command.Command;
+
 import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -9,30 +11,49 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 
-public class LoanQueueBrowser {
+public class LoanQueueBrowser implements Command {
 
-    public static void main(String[] args) throws Exception {
+    private QueueConnection connection = null;
+    private QueueBrowser browser;
+
+
+    @Override
+    public void execute() {
+
+        try {
+            initConnection();
+            Enumeration e = browser.getEnumeration();
+            while (e.hasMoreElements()) {
+                TextMessage msg = (TextMessage) e.nextElement();
+                System.out.println("Browsing: " + msg.getText());
+            }
+
+            browser.close();
+            connection.close();
+            System.exit(0);
+        } catch (Exception ex){
+            System.out.println(ex.getMessage());
+            System.exit(1);
+        }
+
+
+    }
+
+    @Override
+    public void initConnection() throws Exception {
         Properties env = new Properties();
         InputStream is = LoanQueueBrowser.class.getClassLoader().getResourceAsStream("qbl.properties");
         env.load(is);
 
         Context context = new InitialContext(env);
-        QueueConnectionFactory factory = (QueueConnectionFactory) context.lookup("QueueFactory");
-        QueueConnection connection = factory.createQueueConnection();
+        String queueFactory = env.getProperty("connectionFactoryNames");
+        QueueConnectionFactory factory = (QueueConnectionFactory) context.lookup(queueFactory);
+        connection = factory.createQueueConnection();
         connection.start();
 
-        Queue queue = (Queue) context.lookup("queueResp");
+        String qr = env.getProperty("queue.queueResp");
+        Queue queue = (Queue) context.lookup(qr);
         QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-        QueueBrowser browser = session.createBrowser(queue);
-
-        Enumeration e = browser.getEnumeration();
-        while (e.hasMoreElements()) {
-            TextMessage msg = (TextMessage) e.nextElement();
-            System.out.println("Browsing: " + msg.getText());
-        }
-
-        browser.close();
-        connection.close();
-        System.exit(0);
+        browser = session.createBrowser(queue);
     }
 }

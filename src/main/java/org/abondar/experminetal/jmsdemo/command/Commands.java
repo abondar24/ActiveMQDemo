@@ -2,11 +2,13 @@ package org.abondar.experminetal.jmsdemo.command;
 
 public enum  Commands {
 
+    CHAT,
     JOB,
     KAHA,
-    SEC,
+    QB,
     QBR,
     QL,
-    CHAT
+    SEC,
+
 
 }

@@ -2,6 +2,7 @@ package org.abondar.experminetal.jmsdemo.command;
 
 import org.abondar.experminetal.jmsdemo.brokers.BrokerWithSecurity;
 import org.abondar.experminetal.jmsdemo.brokers.KahaDBBroker;
+import org.abondar.experminetal.jmsdemo.p2p.LoanQueueBrowser;
 import org.abondar.experminetal.jmsdemo.p2p.QBorrower;
 import org.abondar.experminetal.jmsdemo.p2p.QLender;
 import org.abondar.experminetal.jmsdemo.p2p.jobs.JobConsumer;
@@ -20,6 +21,11 @@ public class CommandSwitcher {
     public void executeCommand(String cmd){
         try {
             switch (Commands.valueOf(cmd)){
+                case CHAT:
+                    Chat chat = new Chat();
+                    executor.executeCommand(chat);
+                    break;
+
                 case JOB:
                     JobConsumer jobConsumer = new JobConsumer();
                     JobProducer jobProducer = new JobProducer();
@@ -28,19 +34,14 @@ public class CommandSwitcher {
                     executor.executeCommand(jobConsumer);
                     break;
 
-                case SEC:
-                    BrokerWithSecurity bSec = new BrokerWithSecurity();
-                    executor.executeCommand(bSec);
-                    break;
-
                 case KAHA:
                     KahaDBBroker kaha = new KahaDBBroker();
                     executor.executeCommand(kaha);
                     break;
 
-                case QL:
-                    QLender lender = new QLender();
-                    executor.executeCommand(lender);
+                case QB:
+                    LoanQueueBrowser lqb = new LoanQueueBrowser();
+                    executor.executeCommand(lqb);
                     break;
 
                 case QBR:
@@ -48,10 +49,24 @@ public class CommandSwitcher {
                     executor.executeCommand(qBorrower);
                     break;
 
-                case CHAT:
-                    Chat chat = new Chat();
-                    executor.executeCommand(chat);
+                case QL:
+                    QLender lender = new QLender();
+                    executor.executeCommand(lender);
                     break;
+
+
+
+                case SEC:
+                    BrokerWithSecurity bSec = new BrokerWithSecurity();
+                    executor.executeCommand(bSec);
+                    break;
+
+
+
+
+
+
+
             }
         } catch (IllegalArgumentException ex){
             System.out.println("Check documentation for command list");
