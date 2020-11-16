@@ -29,12 +29,14 @@ public class CommandSwitcher {
                     executor.executeCommand(chat);
                     break;
 
-                case JOB:
+                case JC:
                     JobConsumer jobConsumer = new JobConsumer();
-                    JobProducer jobProducer = new JobProducer();
-
-                    executor.executeCommand(jobProducer);
                     executor.executeCommand(jobConsumer);
+                    break;
+
+                case JP:
+                    JobProducer jobProducer = new JobProducer();
+                    executor.executeCommand(jobProducer);
                     break;
 
                 case KAHA:
@@ -76,12 +78,6 @@ public class CommandSwitcher {
                     BrokerWithSecurity bSec = new BrokerWithSecurity();
                     executor.executeCommand(bSec);
                     break;
-
-
-
-
-
-
 
             }
         } catch (IllegalArgumentException ex){

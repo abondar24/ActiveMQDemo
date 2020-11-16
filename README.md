@@ -7,7 +7,8 @@ Set of JMS demos. As a broker used Apache ActiveMQ
 #### P2P
 Point to Point Demos using message queue.
 
-- Jobs - sent job names with ids to corresponding queues and consume them. (job)
+- Job Consumer - consume job names with ids (jc)
+- Job Publisher - send job names with ids to corresponding queues (jp)
 - Queue borrower - loan request using  queue(qbr)
 - Queue lender - accept or decline loan request using  queue(ql)
 - Loan Queue Browser - another consumer for loan request queue which reads loan statuses (qb)

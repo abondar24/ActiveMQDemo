@@ -3,7 +3,8 @@ package org.abondar.experminetal.jmsdemo.command;
 public enum  Commands {
 
     CHAT,
-    JOB,
+    JC,
+    JP,
     KAHA,
     MD,
     QB,
