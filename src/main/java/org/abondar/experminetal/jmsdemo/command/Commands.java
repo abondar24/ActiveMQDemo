@@ -5,5 +5,7 @@ public enum  Commands {
     JOB,
     KAHA,
     SEC,
+    QBR,
+    QL
 
 }

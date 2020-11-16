@@ -1,6 +1,9 @@
 package org.abondar.experminetal.jmsdemo.p2p;
 
 
+import org.abondar.experminetal.jmsdemo.command.Command;
+import org.apache.activemq.ActiveMQConnectionFactory;
+
 import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -11,40 +14,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
-public class QLender implements MessageListener {
+public class QLender implements MessageListener, Command {
 
     private QueueConnection connection = null;
     private QueueSession session = null;
-    private Queue reqQueue = null;
 
-    public QLender(String connFactory, String requestQueue) {
-        try {
 
-            Properties env = new Properties();
-            InputStream is = getClass().getClassLoader().getResourceAsStream("qbl.properties");
-            env.load(is);
-
-            Context ctx = new InitialContext(env);
-            QueueConnectionFactory factory = (QueueConnectionFactory) ctx.lookup(connFactory);
-            connection = factory.createQueueConnection();
-            session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-            reqQueue = (Queue) ctx.lookup(requestQueue);
-            connection.start();
-
-            QueueReceiver receiver = session.createReceiver(reqQueue);
-            receiver.setMessageListener(this);
-
-            System.out.println("Waiting for loan requests...");
-
-        } catch (IOException | JMSException | NamingException ex) {
-            System.err.println(ex.getMessage());
-        }
-    }
 
     @Override
     public void onMessage(Message message) {
         try {
-            boolean accepted = false;
+            boolean accepted;
 
             MapMessage msg = (MapMessage) message;
             double salary = msg.getDouble("Salary");
@@ -77,23 +57,50 @@ public class QLender implements MessageListener {
         System.exit(0);
     }
 
-    public static void main(String[] args) throws Exception {
-        String connectionFactory = null;
-        String requestQueue = null;
-        if (args.length == 2){
-            connectionFactory = args[0];
-            requestQueue = args[1];
-        } else {
-            System.out.println("Invalid Arguments. Usage: ");
-            System.out.println("java QLender factory requestQueue");
-            System.exit(0);
+
+    @Override
+    public void execute() {
+
+        try {
+            initConnection();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("QLender application started");
+            System.out.println("Press enter to quit");
+            reader.readLine();
+            exit();
+        } catch (Exception ex){
+            System.err.println(ex.getMessage());
+            System.exit(1);
         }
 
-        QLender lender = new QLender(connectionFactory,requestQueue);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("QLender application started");
-        System.out.println("Press enter to quit");
-        reader.readLine();
-        lender.exit();
+
+    }
+
+    @Override
+    public void initConnection() throws Exception {
+
+        try {
+
+            Properties env = new Properties();
+            InputStream is = getClass().getClassLoader().getResourceAsStream("qbl.properties");
+            env.load(is);
+            String rq = env.getProperty("queue.queueReq");
+            String connFactory = env.getProperty("connectionFactoryNames");
+
+            Context ctx = new InitialContext(env);
+            QueueConnectionFactory factory = (QueueConnectionFactory) ctx.lookup(connFactory);
+            connection = factory.createQueueConnection();
+            session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+            Queue reqQueue = (Queue) ctx.lookup(rq);
+            connection.start();
+
+            QueueReceiver receiver = session.createReceiver(reqQueue);
+            receiver.setMessageListener(this);
+
+            System.out.println("Waiting for loan requests...");
+
+        } catch (IOException | JMSException | NamingException ex) {
+            System.err.println(ex.getMessage());
+        }
     }
 }

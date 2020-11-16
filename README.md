@@ -8,6 +8,10 @@ Set of JMS demos. As a broker used Apache ActiveMQ
 Point to Point Demos using message queue.
 
 - Jobs - sent job names with ids to corresponding queues and consume them. (job)
+- Qborrower - loan request using  queue(qbr)
+- Qlender - accept or decline loan request using  queue(ql)
+
+Note: Qborrower and Qlender work together
 
 #### Brokers
 

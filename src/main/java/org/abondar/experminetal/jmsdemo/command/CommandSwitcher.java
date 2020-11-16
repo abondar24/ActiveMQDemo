@@ -2,6 +2,8 @@ package org.abondar.experminetal.jmsdemo.command;
 
 import org.abondar.experminetal.jmsdemo.brokers.BrokerWithSecurity;
 import org.abondar.experminetal.jmsdemo.brokers.KahaDBBroker;
+import org.abondar.experminetal.jmsdemo.p2p.QBorrower;
+import org.abondar.experminetal.jmsdemo.p2p.QLender;
 import org.abondar.experminetal.jmsdemo.p2p.jobs.JobConsumer;
 import org.abondar.experminetal.jmsdemo.p2p.jobs.JobProducer;
 
@@ -33,6 +35,16 @@ public class CommandSwitcher {
                 case KAHA:
                     KahaDBBroker kaha = new KahaDBBroker();
                     executor.executeCommand(kaha);
+                    break;
+
+                case QL:
+                    QLender lender = new QLender();
+                    executor.executeCommand(lender);
+                    break;
+
+                case QBR:
+                    QBorrower qBorrower = new QBorrower();
+                    executor.executeCommand(qBorrower);
                     break;
             }
         } catch (IllegalArgumentException ex){
