@@ -34,22 +34,18 @@ public class JobProducer implements Command {
                 }
                 total += count;
                 System.out.println("Sent '" + count + "' of '" + total + "' job messages");
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    System.err.println(ex.getMessage());
-                }
+
             }
             close();
-        } catch (JMSException ex){
-            System.out.println("Failed to connect to broker");
+        } catch (Exception ex){
+            System.err.println("Failed to connect to broker");
             System.exit(1);
         }
 
     }
 
     @Override
-    public void initConnection() throws JMSException {
+    public void initConnection() throws Exception {
         String brokerURL = "tcp://0.0.0.0:61616";
         ConnectionFactory factory = new ActiveMQConnectionFactory(brokerURL);
         connection = factory.createConnection();

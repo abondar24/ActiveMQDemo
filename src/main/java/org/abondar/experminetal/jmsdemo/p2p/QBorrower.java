@@ -3,13 +3,19 @@ package org.abondar.experminetal.jmsdemo.p2p;
 
 import org.abondar.experminetal.jmsdemo.command.Command;
 
-import javax.jms.*;
-
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Queue;
+import javax.jms.QueueConnection;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.QueueReceiver;
+import javax.jms.QueueSender;
+import javax.jms.QueueSession;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
@@ -22,35 +28,34 @@ public class QBorrower implements Command {
     private Queue reqQueue = null;
 
 
-    private void sendLoanRequest(double salary, double loanAmt){
+    private void sendLoanRequest(double salary, double loanAmt) {
         try {
             MapMessage msg = session.createMapMessage();
-            msg.setDouble("Salary",salary);
-            msg.setDouble("LoanAmount",loanAmt);
+            msg.setDouble("Salary", salary);
+            msg.setDouble("LoanAmount", loanAmt);
             msg.setJMSReplyTo(respQueue);
 
             QueueSender sender = session.createSender(reqQueue);
             sender.send(msg);
 
-            String filter = "JMSCorrelationID= '" + msg.getJMSMessageID()+"'";
-            QueueReceiver receiver = session.createReceiver(respQueue,filter);
-            TextMessage tmsg = (TextMessage)receiver.receive(3000);
-            if (tmsg == null){
+            String filter = "JMSCorrelationID= '" + msg.getJMSMessageID() + "'";
+            QueueReceiver receiver = session.createReceiver(respQueue, filter);
+            TextMessage tmsg = (TextMessage) receiver.receive(3000);
+            if (tmsg == null) {
                 System.out.println("Qlender not responding");
             } else {
-                System.out.println("Loan request was "+ tmsg.getText());
+                System.out.println("Loan request was " + tmsg.getText());
             }
-        } catch (JMSException ex){
+        } catch (JMSException ex) {
             System.err.println(ex.getMessage());
-            System.exit(1);
+            System.exit(2);
         }
     }
 
-    private void exit() throws JMSException{
+    private void exit() throws JMSException {
         connection.close();
         System.exit(0);
     }
-
 
 
     @Override
@@ -66,20 +71,20 @@ public class QBorrower implements Command {
         try {
 
             initConnection();
-            while (true){
+            while (true) {
                 System.out.print("> ");
                 String loanReq = reader.readLine();
-                if (loanReq == null || loanReq.trim().length() <=0){
+                if (loanReq == null || loanReq.trim().length() <= 0) {
                     exit();
                 }
 
-                StringTokenizer st  = new StringTokenizer(loanReq,",");
+                StringTokenizer st = new StringTokenizer(loanReq, ",");
                 double salary = Double.parseDouble(st.nextToken().trim());
                 double loanAmt = Double.parseDouble(st.nextToken().trim());
 
-                sendLoanRequest(salary,loanAmt);
+                sendLoanRequest(salary, loanAmt);
             }
-        } catch (Exception ex){
+        } catch (Exception ex) {
             System.err.println(ex.getMessage());
             System.exit(1);
         }
@@ -88,30 +93,24 @@ public class QBorrower implements Command {
 
     @Override
     public void initConnection() throws Exception {
-        try {
+        Properties env = new Properties();
+        InputStream is = getClass().getClassLoader().getResourceAsStream("qbl.properties");
+        env.load(is);
 
+        String reqQueue = env.getProperty("queue.queueReq");
+        String respQueue = env.getProperty("queue.queueResp");
+        String connFactory = env.getProperty("connectionFactoryNames");
 
-            Properties env = new Properties();
-            InputStream is = getClass().getClassLoader().getResourceAsStream("qbl.properties");
-            env.load(is);
+        Context ctx = new InitialContext(env);
+        QueueConnectionFactory factory = (QueueConnectionFactory) ctx.lookup(connFactory);
+        connection = factory.createQueueConnection();
 
-            String reqQueue = env.getProperty("queue.queueReq");
-            String respQueue = env.getProperty("queue.queueResp");
-            String connFactory = env.getProperty("connectionFactoryNames");
+        session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
 
-            Context ctx = new InitialContext(env);
-            QueueConnectionFactory factory = (QueueConnectionFactory) ctx.lookup(connFactory);
-            connection = factory.createQueueConnection();
+        this.reqQueue = (Queue) ctx.lookup(reqQueue);
+        this.respQueue = (Queue) ctx.lookup(respQueue);
 
-            session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+        connection.start();
 
-            this.reqQueue = (Queue) ctx.lookup(reqQueue);
-            this.respQueue = (Queue) ctx.lookup(respQueue);
-
-            connection.start();
-        } catch (IOException | JMSException | NamingException ex){
-            System.err.println(ex.getMessage());
-            System.exit(1);
-        }
     }
 }

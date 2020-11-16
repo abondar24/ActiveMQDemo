@@ -9,7 +9,6 @@ import javax.jms.*;
 
 public class PortfolioConsumer implements Command {
 
-    private static String brokerURL = "tcp://0.0.0.0:61616";
     private static transient ConnectionFactory factory;
     private transient Connection connection;
     private transient Session session;
@@ -21,9 +20,6 @@ public class PortfolioConsumer implements Command {
             connection.close();
         }
     }
-
-
-
 
     @Override
     public void execute() {
@@ -37,7 +33,7 @@ public class PortfolioConsumer implements Command {
                 messageConsumer.setMessageListener(new PortfolioListener());
             }
         } catch (Exception ex){
-            System.out.println(ex.getMessage());
+            System.err.println(ex.getMessage());
             System.exit(1);
         }
 
@@ -45,6 +41,7 @@ public class PortfolioConsumer implements Command {
 
     @Override
     public void initConnection() throws Exception {
+        String brokerURL = "tcp://0.0.0.0:61616";
         factory = new ActiveMQConnectionFactory(brokerURL);
         connection = factory.createConnection();
         connection.start();

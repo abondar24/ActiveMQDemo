@@ -42,7 +42,7 @@ public class Metadata implements Command {
             connection.close();
             System.exit(0);
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            System.err.println(ex.getMessage());
             System.exit(1);
         }
     }

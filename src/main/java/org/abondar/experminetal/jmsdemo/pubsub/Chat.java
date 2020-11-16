@@ -60,7 +60,7 @@ public class Chat implements MessageListener, Command {
                 }
             }
         } catch (Exception ex){
-            System.out.println("Chat failure");
+            System.err.println("Chat failure");
             System.exit(1);
         }
 

@@ -36,15 +36,15 @@ public class JobConsumer implements Command {
                 messageConsumer.setMessageListener(new Listener(job));
 
             }
-        } catch (JMSException ex){
-            System.out.println("Failed to connect to broker");
+        } catch (Exception ex){
+            System.err.println("Failed to connect to broker");
             System.exit(1);
         }
 
     }
 
     @Override
-    public void initConnection() throws JMSException {
+    public void initConnection() throws Exception {
         String brokerURL = "tcp://0.0.0.0:61616";
         ConnectionFactory factory = new ActiveMQConnectionFactory(brokerURL);
         connection = factory.createConnection();
