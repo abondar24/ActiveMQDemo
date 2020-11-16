@@ -1,48 +1,30 @@
 package org.abondar.experminetal.jmsdemo.pubsub;
 
 
-import javax.jms.*;
+import org.abondar.experminetal.jmsdemo.command.Command;
+
+import javax.jms.BytesMessage;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.Session;
+import javax.jms.Topic;
+import javax.jms.TopicConnection;
+import javax.jms.TopicConnectionFactory;
+import javax.jms.TopicSession;
+import javax.jms.TopicSubscriber;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
-public class TBorrower implements MessageListener {
+public class TBorrower implements MessageListener, Command {
 
     private TopicConnection connection = null;
-    private TopicSession session = null;
-    private Topic topic = null;
     private double currentRate;
 
-    public TBorrower(String connFactory, String topicName, String rate) {
-        try {
-            Properties env = new Properties();
-            InputStream is = getClass().getClassLoader().getResourceAsStream("tbl.properties");
-            env.load(is);
-
-            currentRate = Double.valueOf(rate);
-
-            Context context = new InitialContext(env);
-            TopicConnectionFactory factory = (TopicConnectionFactory) context.lookup(connFactory);
-
-            connection = factory.createTopicConnection();
-            session = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-            topic = (Topic) context.lookup(topicName);
-
-            TopicSubscriber subscriber = session.createSubscriber(topic);
-            subscriber.setMessageListener(this);
-            connection.start();
-
-            System.out.println("Waiting for loan requests");
-        } catch (JMSException | NamingException | IOException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(1);
-        }
-    }
 
     @Override
     public void onMessage(Message message) {
@@ -68,26 +50,51 @@ public class TBorrower implements MessageListener {
         connection.close();
         System.exit(0);
     }
-    public static void main(String[] args) throws Exception {
-        String connFactory = null;
-        String topicName = null;
-        String rate = null;
-        if (args.length == 3) {
-            connFactory = args[0];
-            topicName = args[1];
-            rate = args[2];
-        } else {
-            System.out.println("Invalid argument. Usage: ");
-            System.out.println("java TLender factory topic");
-            System.exit(0);
+
+
+    @Override
+    public void execute() {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("TBorrower application started");
+            System.out.println("Press enter to quit");
+            System.out.println("Enter: Rate");
+            System.out.println("e.g 6.8");
+            String rate = reader.readLine();
+            currentRate = Double.parseDouble(rate);
+
+            initConnection();
+            Thread.sleep(100000);
+            exit();
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+            System.exit(1);
         }
 
-        TBorrower borrower = new TBorrower(connFactory,topicName,rate);
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("TBorrower application started");
-        System.out.println("Press enter to quit");
-        reader.readLine();
-        borrower.exit();
+    }
+
+
+    @Override
+    public void initConnection() throws Exception {
+        Properties env = new Properties();
+        InputStream is = getClass().getClassLoader().getResourceAsStream("tbl.properties");
+        env.load(is);
+
+
+        Context context = new InitialContext(env);
+        String connFactory = env.getProperty("connectionFactoryNames");
+        TopicConnectionFactory factory = (TopicConnectionFactory) context.lookup(connFactory);
+
+        connection = factory.createTopicConnection();
+        TopicSession session = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+        String topicName = env.getProperty("topic.rates");
+        Topic topic = (Topic) context.lookup(topicName);
+
+        TopicSubscriber subscriber = session.createSubscriber(topic);
+        subscriber.setMessageListener(this);
+        connection.start();
+
+        System.out.println("Waiting for loan requests");
     }
 }

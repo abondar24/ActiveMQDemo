@@ -13,6 +13,8 @@ public enum  Commands {
     PFC,
     PFP,
     SEC,
+    TBR,
+    TL
 
 
 }

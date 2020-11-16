@@ -9,6 +9,8 @@ import org.abondar.experminetal.jmsdemo.p2p.QLender;
 import org.abondar.experminetal.jmsdemo.p2p.jobs.JobConsumer;
 import org.abondar.experminetal.jmsdemo.p2p.jobs.JobProducer;
 import org.abondar.experminetal.jmsdemo.pubsub.Chat;
+import org.abondar.experminetal.jmsdemo.pubsub.TBorrower;
+import org.abondar.experminetal.jmsdemo.pubsub.TLender;
 import org.abondar.experminetal.jmsdemo.pubsub.portfolio.PortfolioConsumer;
 import org.abondar.experminetal.jmsdemo.pubsub.portfolio.PortfolioPublisher;
 
@@ -79,6 +81,15 @@ public class CommandSwitcher {
                     executor.executeCommand(bSec);
                     break;
 
+                case TBR:
+                    TBorrower tBorrower = new TBorrower();
+                    executor.executeCommand(tBorrower);
+                    break;
+
+                case TL:
+                    TLender tLender = new TLender();
+                    executor.executeCommand(tLender);
+                    break;
             }
         } catch (IllegalArgumentException ex){
             System.out.println("Check documentation for command list");

@@ -15,12 +15,15 @@ Point to Point Demos using message queue.
 - Metadata - read broker metadata (md)
 
 Note: Queue borrower, Queue Lender and Loan Queue Browser work together
+Note: Job Consumer and Job Publisher work together
 #### PubSub
 Publisher Subscribe Demos using message topics
 
 - Chat - topic based chat. Better to run multiple instances (chat)
 - Portfolio Consumer - read stock data from topic (pfc)
 - Portfolio Publisher - publish stock data to topic (pfp)
+- Topic borrower - change rate using topic(tbr)
+- Topic lender - update rate based on the one from topic(tl)
 
 Note: Portfolio Consumer and Portfolio Publisher work together
 
