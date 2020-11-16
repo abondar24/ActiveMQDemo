@@ -6,6 +6,7 @@ public enum  Commands {
     KAHA,
     SEC,
     QBR,
-    QL
+    QL,
+    CHAT
 
 }

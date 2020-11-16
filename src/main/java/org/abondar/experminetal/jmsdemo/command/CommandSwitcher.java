@@ -6,6 +6,7 @@ import org.abondar.experminetal.jmsdemo.p2p.QBorrower;
 import org.abondar.experminetal.jmsdemo.p2p.QLender;
 import org.abondar.experminetal.jmsdemo.p2p.jobs.JobConsumer;
 import org.abondar.experminetal.jmsdemo.p2p.jobs.JobProducer;
+import org.abondar.experminetal.jmsdemo.pubsub.Chat;
 
 public class CommandSwitcher {
 
@@ -45,6 +46,11 @@ public class CommandSwitcher {
                 case QBR:
                     QBorrower qBorrower = new QBorrower();
                     executor.executeCommand(qBorrower);
+                    break;
+
+                case CHAT:
+                    Chat chat = new Chat();
+                    executor.executeCommand(chat);
                     break;
             }
         } catch (IllegalArgumentException ex){

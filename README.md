@@ -11,6 +11,11 @@ Point to Point Demos using message queue.
 - Qborrower - loan request using  queue(qbr)
 - Qlender - accept or decline loan request using  queue(ql)
 
+#### PubSub
+Publisher Subscribe Demos using message topics
+
+- Chat - topic based chat. Better to run multiple instances (chat)
+
 Note: Qborrower and Qlender work together
 
 #### Brokers
