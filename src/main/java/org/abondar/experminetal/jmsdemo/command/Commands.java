@@ -12,7 +12,9 @@ public enum  Commands {
     QL,
     PFC,
     PFP,
+    SC,
     SEC,
+    SS,
     TBR,
     TL
 

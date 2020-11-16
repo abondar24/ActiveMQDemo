@@ -14,8 +14,9 @@ Point to Point Demos using message queue.
 - Loan Queue Browser - another consumer for loan request queue which reads loan statuses (qb)
 - Metadata - read broker metadata (md)
 
-Note: Queue borrower, Queue Lender and Loan Queue Browser work together
-Note: Job Consumer and Job Publisher work together
+1. Note: Queue borrower, Queue Lender and Loan Queue Browser work together
+2. Note: Job Consumer and Job Publisher work together
+
 #### PubSub
 Publisher Subscribe Demos using message topics
 
@@ -24,8 +25,13 @@ Publisher Subscribe Demos using message topics
 - Portfolio Publisher - publish stock data to topic (pfp)
 - Topic borrower - change rate using topic(tbr)
 - Topic lender - update rate based on the one from topic(tl)
+- Sync Server - embedded active mq server with topic (ss)
+- Sync Client - client embedded active mq server with topic (sc)
 
-Note: Portfolio Consumer and Portfolio Publisher work together
+1. Note: Portfolio Consumer and Portfolio Publisher work together
+2. Note: Topic Borrower and Topic Lender work together
+3. Note: Sync Server and Sync Client work together
+
 
 #### Brokers
 

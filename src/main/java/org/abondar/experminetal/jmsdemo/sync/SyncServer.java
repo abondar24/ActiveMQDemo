@@ -1,25 +1,21 @@
 package org.abondar.experminetal.jmsdemo.sync;
 
 
+import org.abondar.experminetal.jmsdemo.command.Command;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 
 import javax.jms.*;
 
-public class Server implements MessageListener {
+public class SyncServer implements MessageListener, Command {
 
-    private String brokerUrl = "tcp://0.0.0.0:61616";
-    private String requestQueue = "requests";
+    private final String brokerUrl = "tcp://0.0.0.0:61616";
 
     private BrokerService broker;
     private Session session;
     private MessageProducer producer;
     private MessageConsumer consumer;
 
-    public void start() throws Exception {
-        createBroker();
-        setupConsumer();
-    }
 
     private void createBroker() throws Exception {
         broker = new BrokerService();
@@ -37,6 +33,7 @@ public class Server implements MessageListener {
         connection.start();
 
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        String requestQueue = "requests";
         Destination adminQueue = session.createQueue(requestQueue);
 
         producer = session.createProducer(null);
@@ -45,7 +42,7 @@ public class Server implements MessageListener {
         consumer.setMessageListener(this);
     }
 
-    public void stop() throws Exception {
+    public void disableConnection() throws Exception {
         producer.close();
         consumer.close();
         session.close();
@@ -74,15 +71,28 @@ public class Server implements MessageListener {
         return "Response to '" + messageText +"'";
     }
 
-    public static void main(String[] args) throws Exception {
-        Server server = new Server();
-        server.start();
 
-        System.out.println();
-        System.out.println("Press any key to stop the server");
-        System.out.println();
+    @Override
+    public void execute() {
 
-        System.in.read();
-        server.stop();
+        try {
+           initConnection();
+            System.out.println();
+            System.out.println("Press any key to stop the server");
+            System.out.println();
+
+            System.in.read();
+            disableConnection();
+        } catch (Exception ex){
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }
+
+    }
+
+    @Override
+    public void initConnection() throws Exception {
+        createBroker();
+        setupConsumer();
     }
 }

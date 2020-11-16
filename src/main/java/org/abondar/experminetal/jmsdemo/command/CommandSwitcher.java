@@ -13,6 +13,8 @@ import org.abondar.experminetal.jmsdemo.pubsub.TBorrower;
 import org.abondar.experminetal.jmsdemo.pubsub.TLender;
 import org.abondar.experminetal.jmsdemo.pubsub.portfolio.PortfolioConsumer;
 import org.abondar.experminetal.jmsdemo.pubsub.portfolio.PortfolioPublisher;
+import org.abondar.experminetal.jmsdemo.sync.SyncClient;
+import org.abondar.experminetal.jmsdemo.sync.SyncServer;
 
 public class CommandSwitcher {
 
@@ -76,9 +78,19 @@ public class CommandSwitcher {
                     executor.executeCommand(publisher);
                     break;
 
+                case SC:
+                    SyncClient syncClient = new SyncClient();
+                    executor.executeCommand(syncClient);
+                    break;
+
                 case SEC:
                     BrokerWithSecurity bSec = new BrokerWithSecurity();
                     executor.executeCommand(bSec);
+                    break;
+
+                case SS:
+                    SyncServer syncServer = new SyncServer();
+                    executor.executeCommand(syncServer);
                     break;
 
                 case TBR:
